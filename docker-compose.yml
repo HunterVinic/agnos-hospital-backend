@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: agnos_postgres
+    environment:
+      POSTGRES_USER: agnos
+      POSTGRES_PASSWORD: agnos123
+      POSTGRES_DB: agnos_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./migrations/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  app:
+    build: .
+    container_name: agnos_app
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: agnos
+      DB_PASSWORD: agnos123
+      DB_NAME: agnos_db
+      JWT_SECRET: supersecret
+    ports:
+      - "8080:8080"
+  
+  nginx:
+    image: nginx:latest
+    container_name: agnos_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - app
+
+volumes:
+  postgres_data:

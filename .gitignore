@@ -1,0 +1,18 @@
+# Binaries
+main
+*.exe
+*.out
+
+# Go
+bin/
+vendor/
+
+# Environment
+.env
+
+# OS
+.DS_Store
+
+# Docker volumes
+postgres_data/
+
